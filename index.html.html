@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M.U.T. – Formulário de Diagnóstico Empresarial</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --laranja: #E8590C;
+    --chumbo: #3a3a3a;
+    --chumbo-escuro: #252525;
+    --cinza-claro: #f2f2f0;
+    --cinza-medio: #e4e4e2;
+    --branco: #ffffff;
+    --texto-claro: #c8c8c8;
+    --erro: #c0392b;
+    --sucesso: #27ae60;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--cinza-claro);
+    font-family: 'Barlow', sans-serif;
+    font-weight: 300;
+    color: var(--chumbo-escuro);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--chumbo-escuro);
+    padding: 36px 24px 30px;
+    text-align: center;
+  }
+  .header-logo {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900; font-size: 48px;
+    color: var(--laranja); letter-spacing: 3px;
+  }
+  .header-sub {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px; letter-spacing: 5px;
+    text-transform: uppercase; color: var(--texto-claro);
+    margin-top: 4px;
+  }
+  .header-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; font-size: 22px;
+    color: var(--branco); margin-top: 18px;
+    letter-spacing: 1px;
+  }
+  .header-desc {
+    font-size: 13px; color: #999;
+    margin-top: 8px; line-height: 1.7;
+    max-width: 460px; margin-left: auto; margin-right: auto;
+  }
+
+  /* PROGRESS */
+  .progress-bar-wrap {
+    background: var(--chumbo);
+    padding: 14px 24px;
+    display: flex; align-items: center; gap: 12px;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .progress-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--laranja);
+    white-space: nowrap; font-weight: 600;
+  }
+  .progress-track {
+    flex: 1; height: 4px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; background: var(--laranja);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+  .progress-pct {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px; color: var(--texto-claro);
+    font-weight: 600; min-width: 32px; text-align: right;
+  }
+
+  /* FORM */
+  .form-wrap {
+    max-width: 680px; margin: 0 auto;
+    padding: 30px 20px 60px;
+  }
+
+  /* SECTION BLOCK */
+  .form-section {
+    background: white;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .form-section.visible {
+    opacity: 1; transform: translateY(0);
+  }
+
+  .form-section-header {
+    background: var(--chumbo-escuro);
+    padding: 16px 22px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-icon {
+    font-size: 20px; flex-shrink: 0;
+  }
+  .section-header-text {}
+  .section-num {
+    font-size: 10px; letter-spacing: 3px;
+    text-transform: uppercase; color: var(--laranja);
+    font-weight: 600;
+  }
+  .section-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; font-size: 18px;
+    color: white; letter-spacing: 0.5px;
+  }
+
+  .form-section-body { padding: 22px; }
+
+  /* FIELD */
+  .field { margin-bottom: 20px; }
+  .field:last-child { margin-bottom: 0; }
+
+  label {
+    display: block;
+    font-size: 13.5px; font-weight: 500;
+    color: var(--chumbo-escuro);
+    margin-bottom: 7px; line-height: 1.5;
+  }
+  label .obrigatorio {
+    color: var(--laranja); margin-left: 3px; font-size: 12px;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="number"],
+  select,
+  textarea {
+    width: 100%;
+    background: var(--cinza-claro);
+    border: 1.5px solid var(--cinza-medio);
+    border-radius: 2px;
+    padding: 10px 14px;
+    font-family: 'Barlow', sans-serif;
+    font-size: 14px; font-weight: 300;
+    color: var(--chumbo-escuro);
+    outline: none;
+    transition: border-color 0.2s ease, background 0.2s ease;
+    appearance: none;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--laranja);
+    background: white;
+  }
+
+  textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23E8590C' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+    cursor: pointer;
+  }
+
+  /* RADIO / CHECKBOX */
+  .options { display: flex; flex-direction: column; gap: 8px; }
+  .options.row { flex-direction: row; flex-wrap: wrap; gap: 8px; }
+
+  .option-item {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--cinza-claro);
+    border: 1.5px solid var(--cinza-medio);
+    border-radius: 2px; padding: 10px 14px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    font-size: 13.5px; color: var(--chumbo-escuro);
+    font-weight: 400;
+  }
+  .option-item:hover { border-color: var(--laranja); background: white; }
+  .option-item input[type="radio"],
+  .option-item input[type="checkbox"] {
+    width: auto; background: none; border: none; padding: 0;
+    accent-color: var(--laranja); flex-shrink: 0;
+    width: 16px; height: 16px; cursor: pointer;
+  }
+  .option-item.selected {
+    border-color: var(--laranja);
+    background: rgba(232,89,12,0.05);
+  }
+
+  /* ESCALA */
+  .escala {
+    display: flex; gap: 6px; align-items: center;
+  }
+  .escala-btn {
+    flex: 1; padding: 8px 4px;
+    text-align: center;
+    background: var(--cinza-claro);
+    border: 1.5px solid var(--cinza-medio);
+    border-radius: 2px;
+    cursor: pointer;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 15px; font-weight: 700;
+    color: #aaa;
+    transition: all 0.2s;
+  }
+  .escala-btn:hover { border-color: var(--laranja); color: var(--laranja); }
+  .escala-btn.selected { background: var(--laranja); border-color: var(--laranja); color: white; }
+  .escala-labels {
+    display: flex; justify-content: space-between;
+    margin-top: 5px;
+  }
+  .escala-labels span {
+    font-size: 10px; color: #aaa; letter-spacing: 0.5px;
+  }
+
+  /* SUBMIT */
+  .submit-area { text-align: center; margin-top: 28px; }
+
+  .btn-submit {
+    background: var(--laranja);
+    color: white; border: none;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; font-size: 18px;
+    letter-spacing: 2px; text-transform: uppercase;
+    padding: 16px 40px; border-radius: 2px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    width: 100%;
+  }
+  .btn-submit:hover { background: #d14e0a; }
+  .btn-submit:active { transform: scale(0.98); }
+
+  .submit-note {
+    font-size: 12px; color: #aaa;
+    margin-top: 12px; line-height: 1.6;
+  }
+
+  /* SUCESSO */
+  .sucesso-box {
+    display: none;
+    background: var(--chumbo-escuro);
+    border-radius: 2px; padding: 40px 28px;
+    text-align: center; margin-top: 20px;
+  }
+  .sucesso-box.show { display: block; }
+  .sucesso-icon { font-size: 48px; margin-bottom: 16px; }
+  .sucesso-titulo {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900; font-size: 28px;
+    color: var(--laranja); letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+  .sucesso-texto {
+    font-size: 14px; color: #aaa; line-height: 1.8;
+  }
+  .sucesso-texto strong { color: white; }
+
+  /* AVISO TOPO */
+  .aviso {
+    background: rgba(232,89,12,0.1);
+    border-left: 3px solid var(--laranja);
+    padding: 12px 16px; margin-bottom: 20px;
+    border-radius: 0 2px 2px 0;
+  }
+  .aviso p { font-size: 12.5px; color: #666; line-height: 1.6; }
+  .aviso strong { color: var(--laranja); }
+
+  footer {
+    background: var(--chumbo-escuro);
+    text-align: center; padding: 24px;
+    margin-top: 0;
+  }
+  footer p {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; font-size: 16px;
+    letter-spacing: 2px; color: var(--laranja);
+  }
+  footer small {
+    display: block; font-size: 11px;
+    letter-spacing: 3px; color: #555;
+    margin-top: 3px; text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-logo">M.U.T.</div>
+  <div class="header-sub">Consultoria de Negócios · Conexões Estratégicas</div>
+  <div class="header-title">Formulário de Diagnóstico Empresarial</div>
+  <p class="header-desc">
+Responda com sinceridade. Esse diagnóstico vai revelar exatamente onde seu negócio está travando e o que precisa ser ajustado para crescer.
+</p>
+</div>
+
+<div class="progress-bar-wrap">
+  <span class="progress-label">Progresso</span>
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  <span class="progress-pct" id="progressPct">0%</span>
+</div>
+
+<div class="form-wrap">
+
+  <div class="aviso">
+    <p><strong>Tempo estimado:</strong> 15 a 20 minutos. Suas respostas são confidenciais e usadas apenas para preparar seu diagnóstico personalizado.</p>
+  </div>
+
+  <form action="https://api.web3forms.com/submit" method="POST">
+    <input type="hidden" name="access_key" value="SUA_CHAVE_AQUI">
+    <!-- SEÇÃO 1: IDENTIFICAÇÃO -->
+    <div class="form-section" id="sec1">
+      <div class="form-section-header">
+        <div class="section-icon">👤</div>
+        <div class="section-header-text">
+          <div class="section-num">Seção 01</div>
+          <div class="section-name">Identificação</div>
+        </div>
+      </div>
+      <div class="form-section-body">
+        <div class="field">
+          <label>Seu nome completo <span class="obrigatorio">*</span></label>
+          <input type="text" name="nome" placeholder="Como prefere ser chamado(a)?" required>
+        </div>
+        <div class="field">
+          <label>WhatsApp / Telefone <span class="obrigatorio">*</span></label>
+          <input type="tel" name="telefone" placeholder="(00) 00000-0000" required>
+        </div>
+        <div class="field">
+          <label>E-mail</label>
+          <input type="email" name="email" placeholder="seu@email.com">
+        </div>
+        <div class="field">
+          <label>Nome do negócio <span class="obrigatorio">*</span></label>
+          <input type="text" name="nome_negocio" placeholder="Como chama sua empresa ou negócio?" required>
+        </div>
+        <div class="field">
+          <label>Cidade onde o negócio está localizado <span class="obrigatorio">*</span></label>
+          <input type="text" name="cidade" placeholder="Cidade / Estado" required>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEÇÃO 2: O NEGÓCIO -->
+    <div class="form-section" id="sec2">
+      <div class="form-section-header">
+        <div class="section-icon">🏢</div>
+        <div class="section-header-text">
+          <div class="section-num">Seção 02</div>
+          <div class="section-name">O Negócio em Geral</div>
+        </div>
+      </div>
+      <div class="form-section-body">
+        <div class="field">
+          <label>O que você vende? (produto, serviço ou os dois?) <span class="obrigatorio">*</span></label>
+          <textarea name="o_que_vende" placeholder="Descreva o que seu negócio oferece..."></textarea>
+        </div>
+        <div class="field">
+          <label>Há quanto tempo o negócio existe? <span class="obrigatorio">*</span></label>
+          <div class="options row">
+            <label class="option-item"><input type="radio" name="tempo_negocio" value="menos_1"> Menos de 1 ano</label>
+            <label class="option-item"><input type="radio" name="tempo_negocio" value="1_3"> 1 a 3 anos</label>
+            <label class="option-item"><input type="radio" name="tempo_negocio" value="3_5"> 3 a 5 anos</label>
+            <label class="option-item"><input type="radio" name="tempo_negocio" value="mais_5"> Mais de 5 anos</label>
+          </div>
+        </div>
+        <div class="field">
+          <label>O negócio tem sócio(s)?</label>
+          <div class="options row">
+            <label class="option-item"><input type="radio" name="socio" value="nao"> Não, sou o único dono</label>
+            <label class="option-item"><input type="radio" name="socio" value="sim_1"> Sim, 1 sócio</label>
+            <label class="option-item"><input type="radio" name="socio" value="sim_mais"> Sim, 2 ou mais sócios</label>
+          </div>
+        </div>
+        <div class="field">
+          <label>O negócio funciona de forma: <span class="obrigatorio">*</span></label>
+          <div class="options row">
+            <label class="option-item"><input type="radio" name="formato" value="fisico"> Físico (loja, escritório, espaço)</label>
+            <label class="option-item"><input type="radio" name="formato" value="online"> Online / Digital</label>
+            <label class="option-item"><input type="radio" name="formato" value="ambos"> Físico e Online</label>
+            <label class="option-item"><input type="radio" name="formato" value="externo"> Prestação de serviços externo</label>
+          </div>
+        </div>
+        <div class="field">
+          <label>Em uma frase, qual é o maior problema do seu negócio hoje? <span class="obrigatorio">*</span></label>
+          <textarea name="maior_problema" placeholder="Fale livremente, sem filtro..." rows="3"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEÇÃO 3: EQUIPE -->
+    <div class="form-section" id="sec3">
+      <div class="form-section-header">
+        <div class="section-icon">👥</div>
+        <div class="section-header-text">
+          <div class="section-num">Seção 03</div>
+          <div class="section-name">Equipe & Funções</div>
+        </div>
+      </div>
+      <div class="form-section-body">
+        <div class="field">
+          <label>Quantas pessoas trabalham no negócio (incluindo você)? <span class="obrigatorio">*</span></label>
+          <div class="options row">
+            <label class="option-item"><input type="radio" name="num_funcionarios" value="so_eu"> Só eu</label>
+            <label class="option-item"><input type="radio" name="num_funcionarios" value="2_3"> 2 a 3</label>
+            <label class="option-item"><input type="radio" name="num_funcionarios" value="4_6"> 4 a 6</label>
+            <label class="option-item"><input type="radio" name="num_funcionarios" value="mais_6"> Mais de 6</label>
+          </div>
+        </div>
+        <div class="field">
+          <label>Cada funcionário sabe exatamente o que precisa fazer no dia a dia? <span class="obrigatorio">*</span></label>
+          <div class="options">
+            <label class="option-item"><input type="radio" name="clareza_funcoes" value="sim"> Sim, está bem claro para todos</label>
+            <label class="option-item"><input type="radio" name="clareza_funcoes" value="parcial"> Mais ou menos — alguns sabem, outros não</label>
+            <label class="option-item"><input type="radio" name="clareza_funcoes" value="nao"> Não, cada um faz como acha que deve</label>
+            <label class="option-item"><input type="radio" name="clareza_funcoes" value="so_eu2"> Trabalho sozinho(a)</label>
+          </div>
+        </div>
+        <div class="field">
+          <label>Existe algum documento com a descrição das funções de cada pessoa?</label>
+          <div class="options row">
+            <label class="option-item"><input type="radio" name="doc_funcoes" value="sim"> Sim</label>
+            <label class="option-item"><input type="radio" name="doc_funcoes" value="nao"> Não</label>
+            <label class="option-item"><input type="radio" name="doc_funcoes" value="parcial"> Tem algo, mas incompleto</label>
+          </div>
+        </div>
+        <div class="field">
+          <label>Quando surge um problema no negócio, quem resolve? <span class="obrigatorio">*</span></label>
+          <div class="options">
+            <label class="option-item"><input type="radio" name="quem_resolve" value="sempre_eu"> Sempre eu — tudo passa por mim</label>
+            <label class="option-item"><input type="radio" name="quem_resolve" value="depende"> Depende do problema — alguns a equipe resolve</label>
+            <label class="option-item"><input type="radio" name="quem_resolve" value="equipe"> A equipe tem autonomia para resolver a maioria</label>
+          </div>
+        </div>
+        <div class="field">
+          <label>Se você ficasse ausente por 2 dias, o negócio funcionaria normalmente?</label>
+          <div class="options row">
+            <label class="option-item"><input type="radio" name="ausencia" value="sim"> Sim, sem problemas</label>
+            <label class="option-item"><input type="radio" name="ausencia" value="parcial"> Parcialmente</label>
+            <label class="option-item"><input type="radio" name="ausencia" value="nao"> Não — tudo pararia</label>
+          </div>
+        </div>
+        <div class="field">
+          <label>O que você percebe de maior dificuldade na sua equipe hoje?</label>
+          <textarea name="dificuldade_equipe" placeholder="Ex: falta de iniciativa, erros frequentes, precisam de supervisão constante..." rows="3"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEÇÃO 4: PROCESSOS -->
+    <div class="form-section" id="sec4">
+      <div class="form-section-header">
+        <div class="section-icon">⚙️</div>
+        <div class="section-header-text">
+          <div class="section-num">Seção 04</div>
+          <div class="section-name">Processos & Rotinas</div>
+        </div>
+      </div>
+      <div class="form-section-body">
+        <div class="field">
+          <label>O negócio tem processos ou rotinas documentadas? <span class="obrigatorio">*</span></label>
+          <div class="options">
+            <label class="option-item"><input type="radio" name="processos_doc" value="sim"> Sim, temos processos escritos e seguidos</label>
+            <label class="option-item"><input type="radio" name="processos_doc" value="na_cabeca"> Existem, mas só na minha cabeça</label>
+            <label class="option-item"><input type="radio" name="processos_doc" value="poucos"> Alguns poucos, mas não é o padrão</label>
+            <label class="option-item"><input type="radio" name="processos_doc" value="nao"> Não temos nada documentado</label>
+          </div>
+        </div>
+        <div class="field">
+          <label>Quando entra um funcionário novo, como ele aprende o trabalho?</label>
+          <div class="options">
+            <label class="option-item"><input type="radio" name="onboarding" value="manual"> Tem um manual ou treinamento estruturado</label>
+            <label class="option-item"><input type="radio" name="onboarding" value="eu_ensino"> Eu ensino pessoalmente</label>
+            <label class="option-item"><input type="radio" name="onboarding" value="colega"> Aprende observando um colega</label>
+            <label class="option-item"><input type="radio" name="onboarding" value="sozinho"> Aprende na tentativa e erro</label>
+          </div>
+        </div>
+        <div class="field">
+          <label>Você consegue acompanhar se as tarefas foram feitas e se foram feitas corretamente?</label>
+          <div class="options row">
+            <label class="option-item"><input type="radio" name="acompanhamento" value="sim"> Sim, tenho controle</label>
+            <label class="option-item"><input type="radio" name="acompanhamento" value="parcial"> Às vezes</label>
+            <label class="option-item"><input type="radio" name="acompanhamento" value="nao"> Raramente ou nunca</label>
+          </div>
+        </div>
+        <div class="field">
+          <label>Como você descreveria a rotina do seu negócio em um dia típico? <span class="obrigatorio">*</span></label>
+          <textarea name="rotina_dia" placeholder="Descreva como é um dia normal no seu negócio, do início ao fim..." rows="4"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEÇÃO 5: ATENDIMENTO -->
+    <div class="form-section" id="sec5">
+      <div class="form-section-header">
+        <div class="section-icon">📞</div>
+        <div class="section-header-text">
+          <div class="section-num">Seção 05</div>
+          <div class="section-name">Atendimento ao Cliente</div>
+        </div>
+      </div>
+      <div class="form-section-body">
+        <div class="field">
+          <label>Como os clientes entram em contato com você? (pode marcar mais de um)</label>
+          <div class="options row">
+            <label class="option-item"><input type="checkbox" name="canal_contato" value="whatsapp"> WhatsApp</label>
+            <label class="option-item"><input type="checkbox" name="canal_contato" value="instagram"> Instagram</label>
+            <label class="option-item"><input type="checkbox" name="canal_contato" value="telefone"> Telefone</label>
+            <label class="option-item"><input type="checkbox" name="canal_contato" value="presencial"> Pessoalmente</label>
+            <label class="option-item"><input type="checkbox" name="canal_contato" value="email"> E-mail</label>
+            <label class="option-item"><input type="checkbox" name="canal_contato" value="site"> Site</label>
+          </div>
+        </div>
+        <div class="field">
+          <label>Existe um tempo máximo definido para responder um cliente?</label>
+          <div class="options row">
+            <label class="option-item"><input type="radio" name="tempo_resposta" value="sim"> Sim, temos um prazo definido</label>
+            <label class="option-item"><input type="radio" name="tempo_resposta" value="nao"> Não, respondemos quando dá</label>
+          </div>
+        </div>
+        <div class="field">
+          <label>Como é feito o processo de orçamento ou venda? <span class="obrigatorio">*</span></label>
+          <div class="options">
+            <label class="option-item"><input type="radio" name="processo_venda" value="estruturado"> Temos um processo claro e seguido por todos</label>
+            <label class="option-item"><input type="radio" name="processo_venda" value="so_eu"> Só eu faço — ninguém mais sabe como fazer</label>
+            <label class="option-item"><input type="radio" name="processo_venda" value="improviso"> É improvisado conforme a situação</label>
+            <label class="option-item"><input type="radio" name="processo_venda" value="nao_sei"> Não tenho clareza sobre isso</label>
+          </div>
+        </div>
+        <div class="field">
+          <label>Quais são as reclamações ou insatisfações mais comuns dos seus clientes?</label>
+          <textarea name="reclamacoes" placeholder="Ex: demora na resposta, falta de retorno, erro na entrega..." rows="3"></textarea>
+        </div>
+        <div class="field">
+          <label>Após a venda ou entrega do serviço, vocês fazem algum contato com o cliente?</label>
+          <div class="options row">
+            <label class="option-item"><input type="radio" name="pos_venda" value="sim"> Sim, sempre</label>
+            <label class="option-item"><input type="radio" name="pos_venda" value="as_vezes"> Às vezes</label>
+            <label class="option-item"><input type="radio" name="pos_venda" value="nao"> Não fazemos pós-venda</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEÇÃO 6: GESTÃO -->
+    <div class="form-section" id="sec6">
+      <div class="form-section-header">
+        <div class="section-icon">🎯</div>
+        <div class="section-header-text">
+          <div class="section-num">Seção 06</div>
+          <div class="section-name">Gestão & Visão do Dono</div>
+        </div>
+      </div>
+      <div class="form-section-body">
+        <div class="field">
+          <label>Em uma escala de 1 a 5, como você avalia a organização do seu negócio hoje? <span class="obrigatorio">*</span></label>
+          <div class="escala" id="escalaOrg">
+            <div class="escala-btn" data-val="1" onclick="selecionarEscala('escalaOrg',1)">1</div>
+            <div class="escala-btn" data-val="2" onclick="selecionarEscala('escalaOrg',2)">2</div>
+            <div class="escala-btn" data-val="3" onclick="selecionarEscala('escalaOrg',3)">3</div>
+            <div class="escala-btn" data-val="4" onclick="selecionarEscala('escalaOrg',4)">4</div>
+            <div class="escala-btn" data-val="5" onclick="selecionarEscala('escalaOrg',5)">5</div>
+          </div>
+          <div class="escala-labels">
+            <span>Muito desorganizado</span>
+            <span>Muito organizado</span>
+          </div>
+          <input type="hidden" name="nota_organizacao" id="notaOrg">
+        </div>
+
+        <div class="field">
+          <label>Quanto do seu tempo é gasto em tarefas operacionais (fazer, executar) vs. estratégicas (pensar, planejar)?</label>
+          <div class="options">
+            <label class="option-item"><input type="radio" name="tempo_op_vs_estrategia" value="quase_tudo_op"> Quase tudo operacional — mal sobra tempo para pensar</label>
+            <label class="option-item"><input type="radio" name="tempo_op_vs_estrategia" value="maioria_op"> A maioria é operacional</label>
+            <label class="option-item"><input type="radio" name="tempo_op_vs_estrategia" value="equilibrado"> Equilibrado entre os dois</label>
+            <label class="option-item"><input type="radio" name="tempo_op_vs_estrategia" value="maioria_estrategia"> Consigo focar mais no estratégico</label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>O negócio tem metas definidas (financeiras, de atendimento, de crescimento)?</label>
+          <div class="options row">
+            <label class="option-item"><input type="radio" name="tem_metas" value="sim_formais"> Sim, metas formais e acompanhadas</label>
+            <label class="option-item"><input type="radio" name="tem_metas" value="sim_informais"> Sim, mas só na minha cabeça</label>
+            <label class="option-item"><input type="radio" name="tem_metas" value="nao"> Não tenho metas definidas</label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>O que você mais gostaria de delegar, mas ainda não consegue? <span class="obrigatorio">*</span></label>
+          <textarea name="o_que_delegar" placeholder="Ex: atendimento, financeiro, redes sociais, organização do estoque..." rows="3"></textarea>
+        </div>
+
+        <div class="field">
+          <label>Como você imagina esse negócio daqui a 2 anos? <span class="obrigatorio">*</span></label>
+          <textarea name="visao_futuro" placeholder="Descreva o negócio que você quer ter..." rows="3"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEÇÃO 7: ABERTURA -->
+    <div class="form-section" id="sec7">
+      <div class="form-section-header">
+        <div class="section-icon">💬</div>
+        <div class="section-header-text">
+          <div class="section-num">Seção 07</div>
+          <div class="section-name">Espaço Livre</div>
+        </div>
+      </div>
+      <div class="form-section-body">
+        <div class="field">
+          <label>Tem algo que você queira adicionar que não foi perguntado? Alguma situação específica, preocupação ou contexto importante?</label>
+          <textarea name="espaco_livre" placeholder="Fique à vontade..." rows="5"></textarea>
+        </div>
+        <div class="field">
+          <label>Como você ficou sabendo da M.U.T. Consultoria?</label>
+          <select name="como_conheceu">
+            <option value="">Selecione...</option>
+            <option value="instagram">Instagram</option>
+            <option value="indicacao">Indicação de alguém</option>
+            <option value="google">Google / Internet</option>
+            <option value="whatsapp">WhatsApp</option>
+            <option value="outro">Outro</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUBMIT -->
+    <div class="submit-area">
+      <button type="submit" class="btn-submit">Receber meu diagnóstico estratégico →</button>
+     <p class="submit-note">
+Você receberá uma análise inicial com os principais pontos de melhoria do seu negócio.<br>
+Entraremos em contato em até 48h para sua devolutiva estratégica personalizada.
+</p>
+    </div>
+
+  </form>
+
+  <!-- SUCESSO -->
+  <div class="sucesso-box" id="sucessoBox">
+    <div class="sucesso-icon">✅</div>
+    <div class="sucesso-titulo">Formulário enviado!</div>
+    <p class="sucesso-texto">Obrigada por confiar na <strong>M.U.T. Consultoria</strong>.<br><br>Suas respostas foram recebidas e em breve entraremos em contato para agendar a sua <strong>devolutiva personalizada</strong>.<br><br>Fique de olho no seu WhatsApp!</p>
+  </div>
+
+</div>
+
+<footer>
+  <p>M.U.T. Consultoria de Negócios</p>
+  <small>Conexões Estratégicas · Diagnóstico Confidencial</small>
+</footer>
+
+<script>
+  // Animação de entrada das seções
+  const sections = document.querySelectorAll('.form-section');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.05 });
+  sections.forEach(s => observer.observe(s));
+
+  // Progresso
+  function updateProgress() {
+    const required = document.querySelectorAll('[required]');
+    const radioGroups = ['tempo_negocio','formato','num_funcionarios','clareza_funcoes','quem_resolve','processos_doc','processo_venda','nota_organizacao','o_que_delegar','maior_problema','rotina_dia','visao_futuro','o_que_delegar','nome','telefone','nome_negocio','cidade'];
+    let filled = 0, total = 0;
+
+    // Text inputs
+    document.querySelectorAll('input[type="text"], input[type="tel"], input[type="email"], textarea').forEach(el => {
+      total++;
+      if (el.value.trim().length > 1) filled++;
+    });
+
+    // Radio groups
+    const groups = new Set();
+    document.querySelectorAll('input[type="radio"]').forEach(r => groups.add(r.name));
+    groups.forEach(g => {
+      total++;
+      if (document.querySelector(`input[name="${g}"]:checked`)) filled++;
+    });
+
+    const pct = Math.min(100, Math.round((filled / total) * 100));
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressPct').textContent = pct + '%';
+  }
+
+  document.getElementById('diagnosticoForm').addEventListener('input', updateProgress);
+  document.getElementById('diagnosticoForm').addEventListener('change', updateProgress);
+
+  // Highlight selected options
+  document.querySelectorAll('.option-item input').forEach(input => {
+    input.addEventListener('change', () => {
+      if (input.type === 'radio') {
+        document.querySelectorAll(`input[name="${input.name}"]`).forEach(r => {
+          r.closest('.option-item').classList.remove('selected');
+        });
+      }
+      if (input.checked) input.closest('.option-item').classList.add('selected');
+      else input.closest('.option-item').classList.remove('selected');
+    });
+  });
+
+  // Escala
+  function selecionarEscala(id, val) {
+    const container = document.getElementById(id);
+    container.querySelectorAll('.escala-btn').forEach(btn => {
+      btn.classList.toggle('selected', parseInt(btn.dataset.val) <= val);
+    });
+    // find hidden input
+    const inputId = id === 'escalaOrg' ? 'notaOrg' : '';
+    if (inputId) document.getElementById(inputId).value = val;
+    updateProgress();
+  }
+
+  // Submit
+  document.getElementById('diagnosticoForm').addEventListener('submit', function(e) {
+    
+    // Simula envio
+    document.getElementById('diagnosticoForm').style.display = 'none';
+    document.getElementById('sucessoBox').classList.add('show');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  updateProgress();
+</script>
+
+</body>
+</html>
